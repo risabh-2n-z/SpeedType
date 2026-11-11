@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Typing Arcade – 4 Typing Games</title>
+<style>
+:root{--bg:#eef0ff;--card:#fff;--ink:#161a3a;--mut:#6a6f99;--line:#d6d9f5;--ac:#5b4bff;--ac2:#ff7a45;--ok:#14a068;--no:#e0394a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1024;--card:#171b3a;--ink:#eceeff;--mut:#9aa0d0;--line:#2a3068;--ac:#8a7dff;--ac2:#ffa26b;--ok:#3ddc97;--no:#ff6b7a}}
+:root[data-theme="dark"]{--bg:#0d1024;--card:#171b3a;--ink:#eceeff;--mut:#9aa0d0;--line:#2a3068;--ac:#8a7dff;--ac2:#ffa26b;--ok:#3ddc97;--no:#ff6b7a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif;min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:18px 14px 30px}
+h1{font:800 clamp(30px,7vw,46px)/1.05 "Trebuchet MS","Segoe UI",sans-serif;margin:0;letter-spacing:-1px;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:4px 0 16px}
+#tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+#tabs button{font:inherit;text-align:left;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:16px;padding:10px 12px;cursor:pointer;transition:transform .15s,border-color .15s}
+#tabs button:hover{transform:translateY(-2px)}
+#tabs button[aria-selected="true"]{border-color:var(--ac);box-shadow:0 6px 0 -2px var(--ac)}
+#tabs b{display:block;font-size:15px}
+#tabs small{color:var(--mut);font-size:12px}
+.e{font-size:22px;display:block}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px}
+.hud{display:flex;gap:8px;margin-bottom:10px}
+.hud div{flex:1;background:var(--bg);border-radius:12px;padding:6px;text-align:center}
+.hud b{display:block;font-size:21px;font-variant-numeric:tabular-nums}
+.hud span{font-size:12px;color:var(--mut)}
+.stage{position:relative;min-height:300px}
+.ar{position:relative;height:min(52vh,380px);background:var(--bg);border-radius:14px;overflow:hidden}
+.ar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,color-mix(in srgb,var(--no) 25%,transparent));border-top:2px dashed var(--no)}
+.w{position:absolute;top:0;padding:3px 12px;background:var(--card);border:2px solid var(--ac);border-radius:999px;font:700 18px/1.3 ui-monospace,Consolas,monospace;white-space:nowrap}
+.w b{color:var(--ok)}
+.w.pop{animation:fade .25s forwards}
+@keyframes fade{to{opacity:0;filter:blur(4px)}}
+input.t{display:block;width:100%;margin-top:10px;padding:13px;font:700 21px ui-monospace,Consolas,monospace;text-align:center;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px}
+input.t.bad{border-color:var(--no)}
+input.t:focus-visible,button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.txt{font:500 clamp(18px,3.4vw,24px)/1.8 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-word;background:var(--bg);border-radius:14px;padding:14px;min-height:160px;user-select:none}
+.txt i{font-style:normal;color:var(--mut)}
+.txt i.ok{color:var(--ok)}.txt i.no{color:#fff;background:var(--no);border-radius:3px}
+.txt i.cur{border-bottom:3px solid var(--ac);color:var(--ink)}
+.big{font:800 clamp(90px,24vw,150px)/1 "Trebuchet MS",sans-serif;text-align:center;color:var(--ac);padding:8px 0}
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center}
+#kb div{display:flex;gap:6px}
+#kb i{font-style:normal;font-weight:700;width:clamp(26px,7.5vw,44px);height:clamp(34px,8vw,44px);display:grid;place-items:center;background:var(--bg);border:2px solid var(--line);border-bottom-width:4px;border-radius:9px;text-transform:uppercase}
+#kb i.t{background:var(--ac);color:#fff;border-color:var(--ac)}
+#kb i.ok{background:var(--ok);color:#fff}#kb i.no{background:var(--no);color:#fff}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar span{width:44px;font-weight:700}
+.bar div{flex:1;height:16px;background:var(--bg);border-radius:99px;overflow:hidden}
+.bar u{display:block;height:100%;width:0;text-decoration:none;border-radius:99px}
+#me3{background:var(--ok)}#bot3{background:var(--ac2)}
+.ov{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;border-radius:14px;background:color-mix(in srgb,var(--card) 94%,transparent)}
+.ov[hidden]{display:none}
+.ov h2{margin:0;font:800 28px "Trebuchet MS",sans-serif}
+.ov p{margin:0;color:var(--mut);max-width:46ch}
+.go{font:700 17px inherit;font-family:inherit;color:#fff;background:var(--ac);border:0;border-bottom:4px solid rgba(0,0,0,.3);border-radius:12px;padding:10px 30px;cursor:pointer}
+.go:active{transform:translateY(2px);border-bottom-width:2px}
+.tip{color:var(--mut);font-size:14px;text-align:center;margin:12px 0 0}
+@media (max-width:560px){#tabs{grid-template-columns:repeat(2,1fr)}.w{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.w.pop,#tabs button{animation:none;transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Typing Arcade</h1>
+<p class="sub">4 alag games, ek hi jagah. Khel khel mein typing tez karo.</p>
+<nav id="tabs" aria-label="Games"></nav>
+<div id="panels"></div>
+<p class="tip">Tip: home row (A S D F, J K L ;) par ungliyan rakho aur keyboard ko dekhe bina type karo.</p>
+</main>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var rnd=function(n){return Math.floor(Math.random()*n)},h=function(id,v){$('#'+id).textContent=v};
+var store={get:function(k){try{return+localStorage.getItem('ta_'+k)||0}catch(e){return 0}},set:function(k,v){try{localStorage.setItem('ta_'+k,v)}catch(e){}}};
+var run=false,cur=0,timer=0,raf=0;
+var P=["cat dog sun map pen cup key box sky run jump book fish tree moon star rain lamp door ship milk gold".split(" "),"laptop screen mouse cursor window folder format coding python typing finger button server pixel online mobile search".split(" "),"keyboard computer software internet password download function developer practice accuracy shortcut".split(" ")];
+var S=["The quick brown fox jumps over the lazy dog.","Practice makes a person perfect at typing.","A good typist never looks down at the keyboard.","Fast fingers and a calm mind win every race.","Keep your wrists straight and your back tall.","Small steps every day build great speed.","Learning to type well saves hours of work.","Press each key with the correct finger."];
+var L="abcdefghijklmnopqrstuvwxyz";
+var M=[
+{n:"Word Rush",e:"🌧️",d:"Shabd girne se pehle type karo. Har 10 shabd par level badhta hai. 3 shabd chhute to game over.",hud:[["s0","Score"],["l0","Level"],["v0","Lives"],["w0","WPM"]],
+ a:'<div class="ar" id="ar0"></div><input class="t" id="in0" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Shabd yahan type karo" aria-label="Type falling word">'},
+{n:"Speed Test",e:"⏱️",d:"30 second mein jitna tez aur sahi type kar sako. Timer pehli key dabate hi shuru hoga.",hud:[["t1","Seconds"],["w1","WPM"],["a1","Accuracy"]],
+ a:'<div class="txt" id="tx1"></div><input class="t" id="in1" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Upar likha hua type karo" aria-label="Speed test input">'},
+{n:"Key Hunt",e:"🎯",d:"Screen par jo akshar dikhe, wahi key dabao. Lagatar sahi dabane par combo bonus milta hai. Time: 30 second.",hud:[["t2","Seconds"],["s2","Score"],["c2","Combo"]],
+ a:'<div class="big" id="big2">A</div><div id="kb"></div>'},
+{n:"Sentence Race",e:"🏁",d:"Bot se pehle poora vakya type karo. Har jeet ke baad bot tez ho jata hai. Ek haar aur race khatam.",hud:[["r3","Round"],["w3","Jeet"],["a3","Accuracy"]],
+ a:'<div class="bar"><span>Aap</span><div><u id="me3"></u></div></div><div class="bar"><span>Bot</span><div><u id="bot3"></u></div></div><div class="txt" id="tx3"></div><input class="t" id="in3" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Vakya yahan type karo" aria-label="Race input">'}
+];
+M.forEach(function(g,i){
+ $('#tabs').insertAdjacentHTML('beforeend','<button role="tab" aria-selected="false" data-i="'+i+'"><span class="e">'+g.e+'</span><b>'+g.n+'</b><small>Best: <span id="bs'+i+'">'+store.get('b'+i)+'</span></small></button>');
+ $('#panels').insertAdjacentHTML('beforeend','<section class="panel" id="p'+i+'" hidden><div class="hud">'+g.hud.map(function(x){return'<div><b id="'+x[0]+'">'+(x[1]==="Accuracy"?"100%":"0")+'</b><span>'+x[1]+'</span></div>'}).join('')+'</div><div class="stage">'+g.a+'<div class="ov" id="ov'+i+'"><h2>'+g.n+'</h2><p>'+g.d+'</p><button class="go" data-s="'+i+'">Start game</button></div></div></section>');
+});
+['qwertyuiop','asdfghjkl','zxcvbnm'].forEach(function(r){$('#kb').insertAdjacentHTML('beforeend','<div>'+r.split('').map(function(c){return'<i data-k="'+c+'">'+c+'</i>'}).join('')+'</div>')});
+function stop(){run=false;cancelAnimationFrame(raf);clearInterval(timer)}
+function show(i){stop();cur=i;$$('.panel').forEach(function(p,j){p.hidden=j!==i});$$('#tabs button').forEach(function(b,j){b.setAttribute('aria-selected',j===i)});var o=$('#ov'+i);o.querySelector('h2').textContent=M[i].n;o.querySelector('p').textContent=M[i].d;o.querySelector('button').textContent='Start game';o.hidden=false}
+function over(i,t,p,s){stop();var b=store.get('b'+i),nb=s>b;if(nb){store.set('b'+i,s);b=s}h('bs'+i,b);var o=$('#ov'+i);o.querySelector('h2').textContent=t;o.querySelector('p').textContent=p+(nb?' · Naya best!':' · Best: '+b);o.querySelector('button').textContent='Play again';o.hidden=false}
+function paint(el,t,v){if(el.dataset.t!==t){el.dataset.t=t;el.innerHTML=t.split('').map(function(c){return'<i>'+c+'</i>'}).join('')}var k=el.children;for(var i=0;i<k.length;i++)k[i].className=i<v.length?(v[i]===t[i]?'ok':'no'):(i===v.length?'cur':'')}
+function g0(){
+ var A=$('#ar0'),I=$('#in0'),ws=[],sc=0,lv=1,li=3,kl=0,tot=0,gd=0,t0=performance.now(),last=t0,sp=t0+300;
+ $$('#ar0 .w').forEach(function(e){e.remove()});run=true;I.value='';I.focus();
+ function hud(){h('s0',sc);h('l0',lv);h('v0',li);var m=(performance.now()-t0)/6e4;h('w0',m>.02?Math.round(gd/5/m):0)}
+ function pick(){var p=lv<3?P[0]:lv<5?P[Math.random()<.6?1:0]:P[rnd(3)];return p[rnd(p.length)]}
+ function loop(ts){if(!run)return;var dt=Math.min(.05,(ts-last)/1e3);last=ts;
+  if(ts>sp){var e=document.createElement('div');e.className='w';var w=pick();e.textContent=w;A.appendChild(e);e.style.left=Math.random()*Math.max(10,A.clientWidth-e.offsetWidth-10)+'px';ws.push({w:w,e:e,y:-30});sp=ts+Math.max(750,2200-lv*140)}
+  var fl=A.clientHeight-44,v=38+lv*9;
+  for(var i=ws.length-1;i>=0;i--){var o=ws[i];o.y+=v*dt;o.e.style.transform='translateY('+o.y+'px)';if(o.y>fl-12){o.e.remove();ws.splice(i,1);if(--li<=0){hud();return over(0,'Game over','Score '+sc+' · Level '+lv+' · '+$('#w0').textContent+' WPM',sc)}}}
+  hud();raf=requestAnimationFrame(loop)}
+ I.oninput=function(e){if(!run)return;var v=I.value.toLowerCase().trim();var ok=!v||ws.some(function(o){return o.w.indexOf(v)===0});if(e.inputType==='insertText'){tot++;if(ok)gd++}
+  I.classList.toggle('bad',!ok);
+  var k=ws.findIndex(function(o){return o.w===v});
+  if(k>-1){var o=ws.splice(k,1)[0];o.e.classList.add('pop');setTimeout(function(){o.e.remove()},250);sc+=o.w.length*10*lv;if(++kl%10===0)lv++;I.value=''}
+  var c=I.value.toLowerCase();ws.forEach(function(o){o.e.innerHTML=c&&o.w.indexOf(c)===0?'<b>'+o.w.slice(0,c.length)+'</b>'+o.w.slice(c.length):o.w});hud()};
+ raf=requestAnimationFrame(loop)}
+function g1(){
+ var T=$('#tx1'),I=$('#in1'),text=S.slice().sort(function(){return Math.random()-.5}).slice(0,5).join(' '),st=0,tot=0,gd=0;
+ T.dataset.t='';paint(T,text,'');I.value='';I.maxLength=text.length;I.focus();run=true;h('t1',30);h('w1',0);h('a1','100%');
+ function acc(){return tot?Math.round(gd/tot*100)+'%':'100%'}
+ function wpm(){var v=I.value,c=0;for(var i=0;i<v.length;i++)if(v[i]===text[i])c++;var m=(performance.now()-st)/6e4;return st&&m>.01?Math.round(c/5/m):0}
+ function fin(){var w=wpm();over(1,'Time up',w+' WPM · Accuracy '+acc(),w)}
+ I.oninput=function(e){if(!run)return;
+  if(!st){st=performance.now();timer=setInterval(function(){var l=30-Math.floor((performance.now()-st)/1e3);h('t1',Math.max(l,0));if(l<=0)fin()},200)}
+  if(e.inputType==='insertText'){tot++;if(I.value.slice(-1)===text[I.value.length-1])gd++}
+  paint(T,text,I.value);h('w1',wpm());h('a1',acc());if(I.value.length>=text.length)fin()}}
+var tg='',sc2=0,cb=0;
+function nx(){tg=L[rnd(26)];h('big2',tg.toUpperCase());$$('#kb i').forEach(function(k){k.classList.toggle('t',k.dataset.k===tg)})}
+function flash(k,c){var el=$('#kb i[data-k="'+k+'"]');if(!el)return;el.classList.add(c);setTimeout(function(){el.classList.remove(c)},160)}
+function g2(){sc2=0;cb=0;run=true;var end=Date.now()+3e4;nx();h('t2',30);h('s2',0);h('c2',0);
+ timer=setInterval(function(){var l=Math.ceil((end-Date.now())/1e3);h('t2',Math.max(l,0));if(l<=0)over(2,'Time up','Score '+sc2,sc2)},200)}
+document.addEventListener('keydown',function(e){if(cur!==2||!run||e.ctrlKey||e.metaKey||e.altKey)return;var k=e.key.toLowerCase();if(L.indexOf(k)<0||k.length!==1)return;e.preventDefault();
+ if(k===tg){sc2+=10+Math.min(cb,10)*2;cb++;flash(k,'ok');nx()}else{cb=0;flash(k,'no')}h('s2',sc2);h('c2',cb)});
+function g3(){
+ var T=$('#tx3'),I=$('#in3'),rd=1,win=0,tx,st,tot=0,gd=0;run=true;h('w3',0);h('a3','100%');
+ function acc(){return tot?Math.round(gd/tot*100)+'%':'100%'}
+ function next(){tx=S[rnd(S.length)];I.value='';I.maxLength=tx.length;T.dataset.t='';paint(T,tx,'');st=performance.now();h('r3',rd);$('#me3').style.width='0';$('#bot3').style.width='0'}
+ next();I.focus();
+ I.oninput=function(e){if(!run)return;var v=I.value;if(e.inputType==='insertText'){tot++;if(v.slice(-1)===tx[v.length-1])gd++}
+  paint(T,tx,v);var n=0;while(n<v.length&&v[n]===tx[n])n++;$('#me3').style.width=n/tx.length*100+'%';h('a3',acc());
+  if(v===tx){win++;rd++;h('w3',win);next()}};
+ function loop(){if(!run)return;var el=Math.max(0,(performance.now()-st-1200)/1e3),p=el*(18+rd*7)*5/60/tx.length;$('#bot3').style.width=Math.min(p,1)*100+'%';
+  if(p>=1)return over(3,'Bot jeet gaya','Aap '+win+' race jeete · Accuracy '+acc(),win);raf=requestAnimationFrame(loop)}
+ raf=requestAnimationFrame(loop)}
+var G=[g0,g1,g2,g3];
+$('#tabs').onclick=function(e){var b=e.target.closest('button');if(b)show(+b.dataset.i)};
+$('#panels').onclick=function(e){var b=e.target.closest('[data-s]');if(!b)return;var i=+b.dataset.s;stop();$('#ov'+i).hidden=true;G[i]()};
+show(0);
+})();
+</script>
+</body>
+</html>
